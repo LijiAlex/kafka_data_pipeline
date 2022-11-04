@@ -1,50 +1,28 @@
-# confluent-kafka-python
+# Confluent kafka for streaming data
+Kafka is primarily used to build real-time streaming data pipelines and applications that adapt to the data streams. 
 
+### Sample Code
+The repo contains sample code to Produce data to Confluent Kafka and Consume data from Confluent Kafka.
 
-This repo help us to know how to publish and consume data to and from kafka confluent in json format.
+### Kafka Configuartion:
 
-Step 1: Create a conda environment
-```
-conda --version
-```
+Get the following details from kafka.
+1. API_KEY
+2. API_SECRET_KEY
+3. BOOTSTRAP_SERVER
+4. SCHEMA_REGISTRY_API_KEY
+5. SCHEMA_REGISTRY_API_SECRET
+6. ENDPOINT_SCHEMA_URL
 
-Step2: Create  a conda environment
-```
-conda create -p venv python==3.8 -y
-```
+### Flows
 
-Step3:
-```
-conda activate venv/
-```
-Step4:
-```
-pip install -r requirements.txt
-```
+1. Producer
 
-Below repo help you to obtain requried credentials
-```
-https://github.com/Big-Data-01/confluent-tutorial.git
-```
+* starting_point: producer_main.py 
+* Updating data in kafka
 
+2. Consumer
 
-Cluster Environment Variable
-```
-API_KEY
-API_SECRET_KEY
-BOOTSTRAP_SERVER
-```
+* starting_point: consumer_main.py 
+* Consume data from kafka and update in mongodb.
 
-
-Schema related Environment Variable
-```
-SCHEMA_REGISTRY_API_KEY
-SCHEMA_REGISTRY_API_SECRET
-ENDPOINT_SCHEMA_URL
-```
-Data base related Environment Variable
-```
-MONGO_DB_URL
-```
-
-Flow chat is available in docs folder of same repo

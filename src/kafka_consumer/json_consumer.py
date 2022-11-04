@@ -10,8 +10,10 @@ from src.database.mongodb import MongodbOperation
 
 
 
-def consumer_using_sample_file(topic,file_path):
+def consume_using_sample_file(topic,file_path):
     schema_str = Generic.get_schema_to_produce_consume_data(file_path=file_path)
+
+    # desialize to dictionary and then to object
     json_deserializer = JSONDeserializer(schema_str,
                                          from_dict=Generic.dict_to_object)
 
@@ -32,15 +34,14 @@ def consumer_using_sample_file(topic,file_path):
             msg = consumer.poll(1.0)
             if msg is None:
                 continue
-
+            
+            # get value from kafka and convert to object
             record: Generic = json_deserializer(msg.value(), SerializationContext(msg.topic(), MessageField.VALUE))
-
-            # mongodb.insert(collection_name="car",record=car.record)
-
             if record is not None:
                 records.append(record.to_dict())
+                # insert to db in batch of 5000
                 if x % 5000 == 0:
-                    mongodb.insert_many(collection_name="car", records=records)
+                    mongodb.insert_many(collection_name="sensor", records=records)
                     records = []
             x = x + 1
         except KeyboardInterrupt:

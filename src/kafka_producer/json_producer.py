@@ -21,7 +21,6 @@
 import argparse
 from uuid import uuid4
 from src.kafka_config import sasl_conf, schema_config
-from six.moves import input
 from src.kafka_logger import logging
 from confluent_kafka import Producer
 from confluent_kafka.serialization import StringSerializer, SerializationContext, MessageField
@@ -30,6 +29,8 @@ from confluent_kafka.schema_registry.json_schema import JSONSerializer
 import pandas as pd
 from typing import List
 from src.entity.generic import Generic, instance_to_dict
+
+import pprint as pp
 
 FILE_PATH = "/home/avnish/iNeuron_Private_Intelligence_Limited/industry_ready_project/projects/data_pipeline/kafka-sensor/sample_data/sensor/aps_failure_training_set1.csv"
 
@@ -65,27 +66,28 @@ def delivery_report(err, msg):
         msg.key(), msg.topic(), msg.partition(), msg.offset()))
 
 
-def product_data_using_file(topic,file_path):
+def produce_data_using_file(topic,file_path):
     schema_str = Generic.get_schema_to_produce_consume_data(file_path=file_path)
     schema_registry_conf = schema_config()
     schema_registry_client = SchemaRegistryClient(schema_registry_conf)
 
     string_serializer = StringSerializer('utf_8')
+
+    # convert schema in str format to dictionary and the do json serialization
     json_serializer = JSONSerializer(schema_str, schema_registry_client, instance_to_dict)
 
     producer = Producer(sasl_conf())
 
-    print("Producing user records to topic {}. ^C to exit.".format(topic))
-    # while True:
-    # Serve on_delivery callbacks from previous calls to produce()
-    producer.poll(0.0)
+    print("Producing user records to topic {}. ^C to exit.".format(topic))    
+    producer.poll(0.0)  # time span to wait for call back events
     try:
         for instance in Generic.get_object(file_path=file_path):
-            print(instance)
+            # print(instance)
+            # serialize both key and value while adding to kafka
             producer.produce(topic=topic,
                              key=string_serializer(str(uuid4()), instance.to_dict()),
                              value=json_serializer(instance, SerializationContext(topic, MessageField.VALUE)),
-                             on_delivery=delivery_report)
+                             on_delivery=delivery_report)            
     except KeyboardInterrupt:
         pass
     except ValueError:

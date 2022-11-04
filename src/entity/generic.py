@@ -1,6 +1,7 @@
 
 import pandas as pd
 import json
+import pprint as pp
 
 class Generic:
 
@@ -19,6 +20,7 @@ class Generic:
 
     @classmethod
     def get_object(cls, file_path):
+        # get records of data
         chunk_df = pd.read_csv(file_path, chunksize=10)
         n_row = 0
         for df in chunk_df:
@@ -64,9 +66,10 @@ class Generic:
 
     @classmethod
     def get_schema_to_produce_consume_data(cls, file_path):
-        columns = next(pd.read_csv(file_path, chunksize=10)).columns
+        columns = next(pd.read_csv(file_path, chunksize=10)).columns  #check why next is required
 
         schema = dict()
+        # as per given in documentation
         schema.update({
             "$id": "http://example.com/myURI.schema.json",
             "$schema": "http://json-schema.org/draft-07/schema#",
@@ -88,7 +91,7 @@ class Generic:
     
         schema = json.dumps(schema)
 
-        print(schema)
+        # pp.pprint(schema)
         return schema
         
 
